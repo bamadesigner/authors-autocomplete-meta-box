@@ -4,7 +4,7 @@
 Plugin Name: Authors Autocomplete Meta Box
 Plugin URI: http://wordpress.org/plugins/authors-autocomplete-meta-box
 Description: Replaces the default WordPress Author meta box (that has an author dropdown) with a meta box that allows you to select the author via Autocomplete.
-Version: 1.1
+Version: 1.2
 Author: Rachel Carden
 Author URI: http://www.rachelcarden.com
 Text Domain: authors-autocomplete-mb

@@ -84,6 +84,9 @@ function filter_authors_autocomplete_mb_author_capability( $author_capability, $
 
 == Changelog ==
 
+= 1.2 =
+* Added support for Internationalization.
+
 = 1.1 =
 * Updated author capability testing from user level to user capabilities.
 * Added ability to change author capability via filter.
@@ -94,6 +97,9 @@ function filter_authors_autocomplete_mb_author_capability( $author_capability, $
 * Plugin launch!
 
 == Upgrade Notice ==
+
+= 1.2 =
+* Added support for Internationalization.
 
 = 1.1 =
 * Updated author capability testing from user level to user capabilities.
