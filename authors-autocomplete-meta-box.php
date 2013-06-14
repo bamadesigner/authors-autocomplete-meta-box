@@ -7,6 +7,7 @@ Description: Replaces the default WordPress Author meta box (that has an author 
 Version: 1.1
 Author: Rachel Carden
 Author URI: http://www.rachelcarden.com
+Text Domain: authors-autocomplete-mb
 */
 
 /*
@@ -14,6 +15,12 @@ Author URI: http://www.rachelcarden.com
  * this plugin and letting me share it with the community.
  * Thanks, guys. You rock!
  */
+ 
+/*
+ * Let's define some stuff.
+ */
+define( 'AUTHORS_AUTOCOMPLETE_MB_DASH', 'authors-autocomplete-mb' );
+define( 'AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN', 'authors-autocomplete-mb' );
 
 /*
  * Registers all of the admin scripts and styles.
@@ -23,8 +30,8 @@ function authors_autocomplete_mb_admin_enqueue_scripts_styles( $page ) {
 	switch( $page ) {
 		case 'post.php':
 		case 'post-new.php':
-			wp_enqueue_style( 'authors-autocomplete-admin-post', plugins_url( 'css/admin-post.css' , __FILE__ ) );
-			wp_enqueue_script( 'authors-autocomplete-admin-post', plugins_url( 'js/admin-post.js' , __FILE__ ), array( 'jquery', 'post', 'jquery-ui-autocomplete' ), '', true );
+			wp_enqueue_style( AUTHORS_AUTOCOMPLETE_MB_DASH . '-admin-post', plugins_url( 'css/admin-post.css' , __FILE__ ) );
+			wp_enqueue_script( AUTHORS_AUTOCOMPLETE_MB_DASH . '-admin-post', plugins_url( 'js/admin-post.js' , __FILE__ ), array( 'jquery', 'post', 'jquery-ui-autocomplete' ), '', true );
 			break;
 	}
 }
@@ -173,15 +180,15 @@ function ajax_authors_autocomplete_mb_if_user_exists_by_value() {
 			
 			// otherwise, let the script know the user is not allowed
 			else {
-				echo json_encode( (object)array( 'notallowed' => 1 ) );
+				echo json_encode( (object) array( 'notallowed' => sprintf( __( "The user '%s' is not allowed to be an author for this post.", AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN ), $user_value ) ) );
 				die();
 			}
 				
 		}
 		
 		// let the script know the user does not exist
-		echo json_encode( (object)array( 'doesnotexist' => 1 ) );
-			
+		echo json_encode( (object) array( 'doesnotexist' => sprintf( __( "The user '%s' does not exist.", AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN ), $user_value ) ) );
+		
 	}
 	
 	die();
@@ -282,10 +289,21 @@ function authors_autocomplete_mb_post_author_meta_box( $post, $metabox ) {
 					<td><input type="text" name="authors_autocomplete_mb_post_author" id="authors_autocomplete_mb_post_author" class="form-input-tip" size="16" autocomplete="off" value="<?php if ( isset( $author ) && isset( $author->data->display_name ) ) echo $author->data->display_name; ?>" /></td>
 				</tr>
 			</table>
-			<p class="howto">You can search for the author by display name, login, or e-mail address.</p>
+			<p class="howto"><?php
+				_e( 'You can search for the author by display name, login, or e-mail address.', AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN );
+			?></p>
 		</div><?php
 		
 	}
+}
+
+/*
+ * Provides support for Internationalization
+ * by loading any plugin translations.
+ */
+add_action( 'admin_init', 'authors_autocomplete_mb_load_plugin_textdomain' );
+function authors_autocomplete_mb_load_plugin_textdomain() {
+	load_plugin_textdomain( AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN, false, plugins_url( 'languages' , __FILE__ ) );
 }
 
 ?>

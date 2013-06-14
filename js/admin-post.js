@@ -121,11 +121,11 @@ jQuery.noConflict()(function(){
 									
 									// if the user is not allowed to be an author
 									if ( $user.notallowed )
-										authors_autocomplete_mb_add_error_message( "The user '" + $entered_user_value + "' is not allowed to be an author for this post." );
+										authors_autocomplete_mb_add_error_message( $user.notallowed );
 									
 									// if the user is not allowed
 									else if ( $user.doesnotexist )
-										authors_autocomplete_mb_add_error_message( "The user '" + $entered_user_value + "' does not exist." );
+										authors_autocomplete_mb_add_error_message( $user.doesnotexist );
 								
 								}
 												
