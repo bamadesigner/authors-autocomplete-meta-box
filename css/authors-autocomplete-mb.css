@@ -1,4 +1,4 @@
-#authors_autocomplete_mb_authordiv table {
+table#authors_autocomplete_mb_autocomplete {
 	width: 100%;
 	height: auto;
 	margin: 10px 0 5px 0;
@@ -7,7 +7,7 @@
 	vertical-align:top;
 	}
 	
-#authors_autocomplete_mb_authordiv td {
+table#authors_autocomplete_mb_autocomplete td {
 	width: auto;
 	height: auto;
 	margin: 0;
@@ -16,7 +16,7 @@
 	vertical-align:top;
 	}
 
-#authors_autocomplete_mb_authordiv td#authors_autocomplete_mb_post_author_gravatar {
+table#authors_autocomplete_mb_autocomplete td#authors_autocomplete_mb_post_author_gravatar {
 	width: 32px;
 	margin: 0;
 	padding: 0 6px 0 0;
@@ -24,7 +24,8 @@
 	line-height: normal;
 	}
 	
-#authors_autocomplete_mb_authordiv td#authors_autocomplete_mb_post_author_gravatar img {
+table#authors_autocomplete_mb_autocomplete td#authors_autocomplete_mb_post_author_gravatar img {
+	display: block;
 	width: 32px;
 	height: 32px;
 	margin: 0!important;
@@ -32,7 +33,7 @@
 	border: 0!important;
 	}
 	
-#authors_autocomplete_mb_authordiv input#authors_autocomplete_mb_post_author {
+table#authors_autocomplete_mb_autocomplete input#authors_autocomplete_mb_post_author {
 	width: 100%;
 	height: 32px;
 	margin: 0;

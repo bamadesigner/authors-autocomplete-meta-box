@@ -1,12 +1,17 @@
 jQuery.noConflict()(function(){
 
 	// save the post ID and post type for AJAX calls
-	var $authors_autocomplete_mb_post_id = jQuery( '#post_ID' ).val();
-	var $authors_autocomplete_mb_post_type = jQuery( '#post_type' ).val();
+	var $authors_autocomplete_mb_post_id = 0;
+	if ( jQuery( '#post_ID' ).length > 0 )
+		$authors_autocomplete_mb_post_id = jQuery( '#post_ID' ).val();
+		
+	var $authors_autocomplete_mb_post_type = '';
+	if ( jQuery( '#post_type' ).length > 0 )
+		$authors_autocomplete_mb_post_type = jQuery( '#post_type' ).val();
 
 	// handle autocomplete for authors
-	jQuery( '#authors_autocomplete_mb_authordiv' ).each( function() {
-	
+	jQuery( 'table#authors_autocomplete_mb_autocomplete' ).each( function() {
+		
 		// this is the authors autocomplete input	
 		var $authors_autocomplete_mb_input = jQuery( 'input#authors_autocomplete_mb_post_author' );
 		

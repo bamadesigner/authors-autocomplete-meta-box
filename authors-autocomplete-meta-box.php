@@ -6,7 +6,7 @@ Plugin URI: http://wordpress.org/plugins/authors-autocomplete-meta-box
 Description: Replaces the default WordPress Author meta box (that has an author dropdown) with a meta box that allows you to select the author via Autocomplete.
 Version: 1.2
 Author: Rachel Carden
-Author URI: http://www.rachelcarden.com
+Author URI: http://www.wpdreamer.com
 Text Domain: authors-autocomplete-mb
 */
 
@@ -30,8 +30,8 @@ function authors_autocomplete_mb_admin_enqueue_scripts_styles( $page ) {
 	switch( $page ) {
 		case 'post.php':
 		case 'post-new.php':
-			wp_enqueue_style( AUTHORS_AUTOCOMPLETE_MB_DASH . '-admin-post', plugins_url( 'css/admin-post.css' , __FILE__ ) );
-			wp_enqueue_script( AUTHORS_AUTOCOMPLETE_MB_DASH . '-admin-post', plugins_url( 'js/admin-post.js' , __FILE__ ), array( 'jquery', 'post', 'jquery-ui-autocomplete' ), '', true );
+			wp_enqueue_style( AUTHORS_AUTOCOMPLETE_MB_DASH, plugins_url( 'css/authors-autocomplete-mb.css' , __FILE__ ) );
+			wp_enqueue_script( AUTHORS_AUTOCOMPLETE_MB_DASH, plugins_url( 'js/authors-autocomplete-mb.js' , __FILE__ ), array( 'jquery', 'post', 'jquery-ui-autocomplete' ), '', true );
 			break;
 	}
 }
@@ -79,7 +79,7 @@ function authors_autocomplete_mb_allow_user( $userdata, $post_id = 0, $post_type
 					 * you to change the tested author capability to
 					 * something other than 'edit_posts'/'edit_pages'.
 					 */
-					$author_capability = apply_filters( 'authors_autocomplete_mb_author_capability', ( isset( $post_type ) && $post_type == 'page' ) ? 'edit_pages' : 'edit_posts', $post_id, $post_type );
+					$author_capability = apply_filters( 'authors_autocomplete_mb_author_capability', ( ( $post_type && 'page' == $post_type ) ? 'edit_pages' : 'edit_posts' ), $post_id, $post_type );
 										
 					if ( isset( $wp_roles->roles[ $role ] )
 						&& isset( $wp_roles->roles[ $role ][ 'capabilities' ] )
@@ -113,16 +113,40 @@ function ajax_authors_autocomplete_mb_autocomplete_callback() {
 	// if search term exists
 	if ( $search_term = ( isset( $_POST[ 'authors_autocomplete_mb_search_term' ] ) && ! empty( $_POST[ 'authors_autocomplete_mb_search_term' ] ) ) ? $_POST[ 'authors_autocomplete_mb_search_term' ] : NULL ) {
 	
-		// retrieve all of the user data of users who match search term
-		if ( ( $users = $wpdb->get_results( "SELECT users.*, usermeta.meta_value AS capabilities FROM $wpdb->users users INNER JOIN $wpdb->usermeta usermeta ON usermeta.user_id = users.ID AND usermeta.meta_key = '{$wpdb->get_blog_prefix( $blog_id )}capabilities' WHERE ( users.user_login LIKE '%$search_term%' OR users.display_name LIKE '%$search_term%' OR users.user_email LIKE '%$search_term%' ) ORDER BY users.display_name" ) )
-			&& is_array( $users ) ) {
-	
-			// we need the post ID for authors_autocomplete_mb_allow_user()
-			$post_id = ( isset( $_POST[ 'authors_autocomplete_mb_post_id' ] ) && $_POST[ 'authors_autocomplete_mb_post_id' ] > 0 ) ? $_POST[ 'authors_autocomplete_mb_post_id' ] : 0;
+		$post_id = ( isset( $_POST[ 'authors_autocomplete_mb_post_id' ] ) && $_POST[ 'authors_autocomplete_mb_post_id' ] > 0 ) ? $_POST[ 'authors_autocomplete_mb_post_id' ] : 0;
 		
-			// we need the post type for authors_autocomplete_mb_allow_user()
-			$post_type = ( isset( $_POST[ 'authors_autocomplete_mb_post_type' ] ) && ! empty( $_POST[ 'authors_autocomplete_mb_post_type' ] ) ) ? $_POST[ 'authors_autocomplete_mb_post_type' ] : 0;
-				
+		$post_type = ( isset( $_POST[ 'authors_autocomplete_mb_post_type' ] ) && ! empty( $_POST[ 'authors_autocomplete_mb_post_type' ] ) ) ? $_POST[ 'authors_autocomplete_mb_post_type' ] : 0;
+	
+		/*
+		 * Allows you to run your own search.
+		 * Simply return the user ID(s) in an array
+		 * and I'll take care of the rest.
+		 */
+		if ( $custom_user_search_user_ids = apply_filters( 'authors_autocomplete_mb_custom_user_search_user_ids', array(), $search_term, $post_id, $post_type ) ) {
+			
+			// validate user IDs
+			$valid_custom_user_search_user_ids = array();
+			foreach( $custom_user_search_user_ids as $id ) {
+				if ( is_int( $id ) && $id > 0 )
+					$valid_custom_user_search_user_ids[] = $id;
+			}
+			
+			$custom_user_search_user_ids = $valid_custom_user_search_user_ids;
+					
+		}
+		
+		// prepare for query
+		if ( $custom_user_search_user_ids )
+			$custom_user_search_user_ids = "('" . implode( "','", $custom_user_search_user_ids ) . "')";
+		else
+			$custom_user_search_user_ids = "('')";
+		
+		/*
+		 * Retrieve all of the user data of users who match search term
+		 * OR who's user ID exists in $custom_user_search_user_ids.
+		 */
+		if ( $users = $wpdb->get_results( "SELECT users.*, usermeta.meta_value AS capabilities FROM $wpdb->users users INNER JOIN $wpdb->usermeta usermeta ON usermeta.user_id = users.ID AND usermeta.meta_key = '{$wpdb->get_blog_prefix( $blog_id )}capabilities' WHERE ( ( users.user_login LIKE '%$search_term%' OR users.display_name LIKE '%$search_term%' OR users.user_email LIKE '%$search_term%' ) OR users.ID IN $custom_user_search_user_ids ) ORDER BY users.display_name" ) ) {
+		
 			// build the autocomplete results
 			$results = array();
 			
@@ -163,10 +187,8 @@ function ajax_authors_autocomplete_mb_if_user_exists_by_value() {
 	// if user value exists
 	if ( $user_value = ( isset( $_POST[ 'authors_autocomplete_mb_user_value' ] ) && ! empty( $_POST[ 'authors_autocomplete_mb_user_value' ] ) ) ? $_POST[ 'authors_autocomplete_mb_user_value' ] : NULL ) {
 	
-		// we need the post ID for authors_autocomplete_mb_allow_user()
 		$post_id = ( isset( $_POST[ 'authors_autocomplete_mb_post_id' ] ) && $_POST[ 'authors_autocomplete_mb_post_id' ] > 0 ) ? $_POST[ 'authors_autocomplete_mb_post_id' ] : 0;
 	
-		// we need the post type for authors_autocomplete_mb_allow_user()
 		$post_type = ( isset( $_POST[ 'authors_autocomplete_mb_post_type' ] ) && ! empty( $_POST[ 'authors_autocomplete_mb_post_type' ] ) ) ? $_POST[ 'authors_autocomplete_mb_post_type' ] : 0;
 	
 		// if the user exists, get all of their information
@@ -269,32 +291,64 @@ function authors_autocomplete_mb_post_author_meta_box( $post, $metabox ) {
 		// get selected author
 		$author = isset( $post->post_author ) ? get_user_by( 'id', $post->post_author ) : get_user_by( 'id', $user_ID );
 		
-		?><div id="authors_autocomplete_mb_dropdown" class="hide-if-js">
-			<label class="screen-reader-text" for="post_author_override"><?php _e( 'Author' ); ?></label>
-			<?php wp_dropdown_users( array(
-				'who' => 'authors',
-				'name' => 'post_author_override',
-				'selected' => ( isset( $author ) && isset( $author->ID ) ) ? $author->ID : $user_ID,
-				'include_selected' => true
-				)); ?>
-				
-		</div>		
-		<div class="hide-if-no-js">
-			<label class="screen-reader-text" for="authors_autocomplete_mb_post_author_override_user_id"><?php _e( 'Author' ); ?></label>
-			<input type="hidden" id="authors_autocomplete_mb_post_author_override_user_id" name="post_author_override" value="<?php if ( isset( $author ) && isset( $author->ID ) ) echo $author->ID; ?>" />
-			<input type="hidden" id="authors_autocomplete_mb_post_author_override_display_name" name="authors_autocomplete_mb_post_author_display_name" value="<?php if ( isset( $author ) && isset( $author->data->display_name ) ) echo $author->data->display_name; ?>" />
-			<table cellpadding="0" cellspacing="0" border="0">
-				<tr>
-					<td id="authors_autocomplete_mb_post_author_gravatar"><?php echo get_avatar( $author->ID, 32 ); ?></td>
-					<td><input type="text" name="authors_autocomplete_mb_post_author" id="authors_autocomplete_mb_post_author" class="form-input-tip" size="16" autocomplete="off" value="<?php if ( isset( $author ) && isset( $author->data->display_name ) ) echo $author->data->display_name; ?>" /></td>
-				</tr>
-			</table>
-			<p class="howto"><?php
-				_e( 'You can search for the author by display name, login, or e-mail address.', AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN );
-			?></p>
-		</div><?php
+		/*
+		 * Prints the author autocomplete table.
+		 * Separating out this function allows you to
+		 * print this table wherever you like.
+		 */
+		authors_autocomplete_mb_print_author_autocomplete_table( $author );
 		
 	}
+}
+
+/*
+ * Prints the author autocomplete table.
+ * Separating out this function allows you to
+ * print this table wherever you like.
+ *
+ * If you use outside the "Edit Post" screen,
+ * be sure to include the javascript file.
+ * Including the CSS file is up to you.
+ *
+ * $selected_author is WP_User object.
+ */
+function authors_autocomplete_mb_print_author_autocomplete_table( $selected_author = array() ) {
+
+	if ( ! is_a( $selected_author, 'WP_User' ) )
+		$selected_author = NULL;
+
+	?><div id="authors_autocomplete_mb_dropdown" class="hide-if-js">
+		<label class="screen-reader-text" for="post_author_override"><?php _e( 'Author' ); ?></label>
+		<?php wp_dropdown_users( array(
+			'who' => 'authors',
+			'name' => 'post_author_override',
+			'selected' => ( isset( $selected_author ) && isset( $selected_author->ID ) ) ? $selected_author->ID : NULL,
+			'include_selected' => true
+			)); ?>
+			
+	</div>		
+	<div class="hide-if-no-js">
+		<label class="screen-reader-text" for="authors_autocomplete_mb_post_author_override_user_id"><?php _e( 'Author' ); ?></label>
+		<input type="hidden" id="authors_autocomplete_mb_post_author_override_user_id" name="post_author_override" value="<?php if ( isset( $selected_author ) && isset( $selected_author->ID ) ) echo $selected_author->ID; ?>" />
+		<input type="hidden" id="authors_autocomplete_mb_post_author_override_display_name" name="authors_autocomplete_mb_post_author_display_name" value="<?php if ( isset( $selected_author ) && isset( $selected_author->data->display_name ) ) echo $selected_author->data->display_name; ?>" />
+		<table id="authors_autocomplete_mb_autocomplete" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<td id="authors_autocomplete_mb_post_author_gravatar"><?php
+				
+					if ( isset( $selected_author ) && isset( $selected_author->ID ) )
+						echo get_avatar( $selected_author->ID, 32 );
+					else
+						echo '<img src="http://www.gravatar.com/avatar/?d=mm" />';
+						
+				?></td>
+				<td><input type="text" name="authors_autocomplete_mb_post_author" id="authors_autocomplete_mb_post_author" class="form-input-tip" size="16" autocomplete="off" value="<?php if ( isset( $selected_author ) && isset( $selected_author->data->display_name ) ) echo $selected_author->data->display_name; ?>" /></td>
+			</tr>
+		</table>
+		<p class="howto"><?php
+			_e( 'You can search for the author by display name, login, or e-mail address.', AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN );
+		?></p>
+	</div><?php
+
 }
 
 /*

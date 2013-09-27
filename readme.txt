@@ -86,6 +86,8 @@ function filter_authors_autocomplete_mb_author_capability( $author_capability, $
 
 = 1.2 =
 * Added support for Internationalization.
+* Added ability to run custom user search via filter.
+* Renamed the CSS and Javascript file.
 
 = 1.1 =
 * Updated author capability testing from user level to user capabilities.
@@ -100,6 +102,8 @@ function filter_authors_autocomplete_mb_author_capability( $author_capability, $
 
 = 1.2 =
 * Added support for Internationalization.
+* Added ability to run custom user search via filter.
+* Renamed the CSS and Javascript file.
 
 = 1.1 =
 * Updated author capability testing from user level to user capabilities.
