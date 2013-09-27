@@ -104,6 +104,7 @@ function authors_autocomplete_custom_user_search( $user_ids, $search_term, $post
 == Changelog ==
 
 = 1.2 =
+* Added support for custom post type author capability testing.
 * Added support for Internationalization.
 * Added ability to run custom user search via filter.
 * Renamed the CSS and Javascript file.
@@ -120,6 +121,7 @@ function authors_autocomplete_custom_user_search( $user_ids, $search_term, $post
 == Upgrade Notice ==
 
 = 1.2 =
+* Added support for custom post type author capability testing.
 * Added support for Internationalization.
 * Added ability to run custom user search via filter.
 * Renamed the CSS and Javascript file.

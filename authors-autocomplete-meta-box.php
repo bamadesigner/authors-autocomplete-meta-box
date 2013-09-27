@@ -79,7 +79,9 @@ function authors_autocomplete_mb_allow_user( $userdata, $post_id = 0, $post_type
 					 * you to change the tested author capability to
 					 * something other than 'edit_posts'/'edit_pages'.
 					 */
-					$author_capability = apply_filters( 'authors_autocomplete_mb_author_capability', ( ( $post_type && 'page' == $post_type ) ? 'edit_pages' : 'edit_posts' ), $post_id, $post_type );
+					$default_author_capability = ( $post_type && ( $post_type_object = get_post_type_object( $post_type ) ) && isset( $post_type_object->cap ) && isset( $post_type_object->cap->edit_posts ) ) ? $post_type_object->cap->edit_posts : 'edit_posts';
+					
+					$author_capability = apply_filters( 'authors_autocomplete_mb_author_capability', $default_author_capability, $post_id, $post_type );
 										
 					if ( isset( $wp_roles->roles[ $role ] )
 						&& isset( $wp_roles->roles[ $role ][ 'capabilities' ] )
