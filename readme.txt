@@ -72,6 +72,25 @@ function filter_authors_autocomplete_mb_author_capability( $author_capability, $
 }
 ?>`
 
+= authors_autocomplete_mb_custom_user_search_user_ids =
+
+Want the autocomplete box to search information besides the default user_login, display_name and user_email? This is the filter for you.
+
+Use this filter to run whatever search you like and simply return the user IDs from your results.
+
+It passes a blank array to get you started, the search term, post ID and post type. **Don't forget:** when using a filter, you **MUST** return something.
+
+Here's an example from me helping a user search their [CIMY User Extra Fields](http://wordpress.org/plugins/cimy-user-extra-fields/):
+
+`<?php
+// search CIMY User Extra Fields with search term and return user IDs
+add_filter( 'authors_autocomplete_mb_custom_user_search_user_ids', 'authors_autocomplete_custom_user_search', 1, 4 );
+function authors_autocomplete_custom_user_search( $user_ids, $search_term, $post_id, $post_type ) {
+   global $wpdb;
+   return $wpdb->get_col( "SELECT users.ID, cimy_uef_data.VALUE FROM $wpdb->users users LEFT JOIN {$wpdb->prefix}cimy_uef_data cimy_uef_data ON cimy_uef_data.USER_ID = users.ID WHERE ( cimy_uef_data.VALUE LIKE '%$search_term%' OR users.user_login LIKE '%$search_term%' OR users.display_name LIKE '%$search_term%' OR users.user_email LIKE '%$search_term%' ) ORDER BY users.ID ASC" );
+}
+?>`
+
 == Installation ==
 
 1. Upload 'authors-autocomplete-meta-box' to the '/wp-content/plugins/' directory.
