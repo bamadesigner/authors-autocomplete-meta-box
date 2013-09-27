@@ -123,11 +123,11 @@ function ajax_authors_autocomplete_mb_autocomplete_callback() {
 		 * and I'll take care of the rest.
 		 */
 		if ( $custom_user_search_user_ids = apply_filters( 'authors_autocomplete_mb_custom_user_search_user_ids', array(), $search_term, $post_id, $post_type ) ) {
-			
+		
 			// validate user IDs
 			$valid_custom_user_search_user_ids = array();
 			foreach( $custom_user_search_user_ids as $id ) {
-				if ( is_int( $id ) && $id > 0 )
+				if ( ( $id = intval( $id ) ) && $id > 0 )
 					$valid_custom_user_search_user_ids[] = $id;
 			}
 			
@@ -140,7 +140,7 @@ function ajax_authors_autocomplete_mb_autocomplete_callback() {
 			$custom_user_search_user_ids = "('" . implode( "','", $custom_user_search_user_ids ) . "')";
 		else
 			$custom_user_search_user_ids = "('')";
-		
+			
 		/*
 		 * Retrieve all of the user data of users who match search term
 		 * OR who's user ID exists in $custom_user_search_user_ids.
