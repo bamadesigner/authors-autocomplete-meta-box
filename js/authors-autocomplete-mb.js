@@ -51,7 +51,10 @@ jQuery.noConflict()(function(){
 					});
 				},
 				search: function( $event, $ui ) {
+				
+					// make sure any errors are removed
 					authors_autocomplete_mb_remove_error_message();
+					
 				},
 				select: function( $event, $ui ) {
 				
@@ -66,13 +69,25 @@ jQuery.noConflict()(function(){
 					
 				},
 				response: function( $event, $ui ) {
+				
+					// stop the loading spinner
 					authors_autocomplete_mb_stop_loading_spinner();
+					
 				},
 				focus: function( $event, $ui ) {
+					
+					// stop the loading spinner
 					authors_autocomplete_mb_stop_loading_spinner();
+				
+					// make sure any errors are removed
+					authors_autocomplete_mb_remove_error_message();
+					
 				},
 				close: function( $event, $ui ) {
+				
+					// stop the loading spinner
 					authors_autocomplete_mb_stop_loading_spinner();
+					
 				},
 				change: function( $event, $ui ) {
 					
@@ -104,7 +119,9 @@ jQuery.noConflict()(function(){
 							dataType: 'json',
 							data: {
 								action: 'authors_autocomplete_mb_if_user_exists_by_value',
-								authors_autocomplete_mb_user_value: $entered_user_value
+								authors_autocomplete_mb_user_value: $entered_user_value,
+								authors_autocomplete_mb_post_id: $authors_autocomplete_mb_post_id,
+								authors_autocomplete_mb_post_type: $authors_autocomplete_mb_post_type
 							},
 							success: function( $user ){
 								
@@ -210,6 +227,5 @@ function authors_autocomplete_mb_change_post_author( $post_author_id, $post_auth
 		});
 		
 	}
-
 
 }
