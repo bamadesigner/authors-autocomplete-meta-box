@@ -21,6 +21,7 @@ Text Domain: authors-autocomplete-mb
  */
 define( 'AUTHORS_AUTOCOMPLETE_MB_DASH', 'authors-autocomplete-mb' );
 define( 'AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN', 'authors-autocomplete-mb' );
+define( 'AUTHORS_AUTOCOMPLETE_MB_URL', trailingslashit( plugin_dir_url( __FILE__ ) ) );
 
 /*
  * Registers all of the admin scripts and styles.
@@ -30,8 +31,8 @@ function authors_autocomplete_mb_admin_enqueue_scripts_styles( $page ) {
 	switch( $page ) {
 		case 'post.php':
 		case 'post-new.php':
-			wp_enqueue_style( AUTHORS_AUTOCOMPLETE_MB_DASH, plugins_url( 'css/authors-autocomplete-mb.css' , __FILE__ ) );
-			wp_enqueue_script( AUTHORS_AUTOCOMPLETE_MB_DASH, plugins_url( 'js/authors-autocomplete-mb.js' , __FILE__ ), array( 'jquery', 'post', 'jquery-ui-autocomplete' ), '', true );
+			wp_enqueue_style( AUTHORS_AUTOCOMPLETE_MB_DASH, AUTHORS_AUTOCOMPLETE_MB_URL . 'css/authors-autocomplete-mb.css' );
+			wp_enqueue_script( AUTHORS_AUTOCOMPLETE_MB_DASH, AUTHORS_AUTOCOMPLETE_MB_URL . 'js/authors-autocomplete-mb.js', array( 'jquery', 'post', 'jquery-ui-autocomplete' ), '', true );
 			break;
 	}
 }
@@ -359,7 +360,7 @@ function authors_autocomplete_mb_print_author_autocomplete_table( $selected_auth
  */
 add_action( 'admin_init', 'authors_autocomplete_mb_load_plugin_textdomain' );
 function authors_autocomplete_mb_load_plugin_textdomain() {
-	load_plugin_textdomain( AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN, false, plugins_url( 'languages' , __FILE__ ) );
+	load_plugin_textdomain( AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN, false, trailingslashit( AUTHORS_AUTOCOMPLETE_MB_URL . 'languages' ) );
 }
 
 ?>
