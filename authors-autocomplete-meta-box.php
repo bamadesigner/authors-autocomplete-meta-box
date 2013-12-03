@@ -7,20 +7,23 @@ Description: Replaces the default WordPress Author meta box (that has an author 
 Version: 1.2
 Author: Rachel Carden
 Author URI: http://www.wpdreamer.com
-Text Domain: authors-autocomplete-mb
+Text Domain: authors-autocomplete-meta-box
 */
 
 /*
  * Big shoutout to http://www.ereleases.com for commissioning
  * this plugin and letting me share it with the community.
  * Thanks, guys. You rock!
+ *
+ * Also, thanks to Andrew Kurtis from WebHostingHub Support
+ * for helping me with the Spanish translation.
  */
  
 /*
  * Let's define some stuff.
  */
 define( 'AUTHORS_AUTOCOMPLETE_MB_DASH', 'authors-autocomplete-mb' );
-define( 'AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN', 'authors-autocomplete-mb' );
+define( 'AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN', 'authors-autocomplete-meta-box' );
 define( 'AUTHORS_AUTOCOMPLETE_MB_URL', trailingslashit( plugin_dir_url( __FILE__ ) ) );
 
 /*
@@ -360,7 +363,7 @@ function authors_autocomplete_mb_print_author_autocomplete_table( $selected_auth
  */
 add_action( 'admin_init', 'authors_autocomplete_mb_load_plugin_textdomain' );
 function authors_autocomplete_mb_load_plugin_textdomain() {
-	load_plugin_textdomain( AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN, false, trailingslashit( AUTHORS_AUTOCOMPLETE_MB_URL . 'languages' ) );
+	load_plugin_textdomain( AUTHORS_AUTOCOMPLETE_MB_TEXTDOMAIN, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 
 ?>

@@ -44,10 +44,10 @@ table#authors_autocomplete_mb_autocomplete input#authors_autocomplete_mb_post_au
 	color: red;
 	font-weight: bold;
 	margin: 0;
-	padding: 3px 0 0 0;
+	padding: 5px 0 0 0;
 	}
 	
 #authors_autocomplete_mb_authordiv .howto {
-	margin: 0;
+	margin: 5px 0 0 0;
 	padding: 0;
 	}

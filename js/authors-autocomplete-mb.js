@@ -20,6 +20,7 @@ jQuery.noConflict()(function(){
 		
 		// autocomplete new tags
 		if ( $authors_autocomplete_mb_input.size() > 0 ) {
+			
 			$authors_autocomplete_mb_input.autocomplete({
 				delay: 100,
 				minLength: 1,
@@ -161,6 +162,25 @@ jQuery.noConflict()(function(){
 			}).data( "ui-autocomplete" )._renderItem = function( $ul, $item ) {
 				return jQuery( '<li>' ).append( '<a><strong>' + $item.display_name + '</strong><br />Username: <em>' + $item.user_login + '</em><br />E-mail: <em>' + $item.email + '</em></a>' ).appendTo( $ul );
 			};
+			
+			/**
+			 * When focus is returned to input,
+			 * make sure the loading spinner stops and
+			 * any error messages are removed.
+			 *
+			 * For some reason the autocomplete 'focus'
+			 * event doesn't work 100% of the time.
+			 */
+			$authors_autocomplete_mb_input.on( 'focus', function( $event, $ui ) {
+				
+				// stop the loading spinner
+				authors_autocomplete_mb_stop_loading_spinner();
+				
+				// make sure any errors are removed
+				authors_autocomplete_mb_remove_error_message();
+					
+			});
+			
 	    }
 		
 	});

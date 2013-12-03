@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=bamad
 Tags: author, authors, autocomplete, auto, complete, metabox, meta, box, edit, post, page
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.1
+Stable tag: 1.2
 
 Replaces the default WordPress Author dropdown with a meta box that allows you to select the author via Autocomplete.
 
@@ -17,6 +17,8 @@ Can really come in handy if you have a lot of authors and are tired of scrolling
 == Credits ==
 
 Big shoutout to [ereleases.com](http://www.ereleases.com) for commissioning this plugin and letting me share it with the community. Thanks, guys. You rock!
+
+Lots of thanks to Andrew Kurtis from WebHostingHub Support for providing the Spanish translation.
 
 == Filters ==
 
@@ -104,9 +106,10 @@ function authors_autocomplete_custom_user_search( $user_ids, $search_term, $post
 == Changelog ==
 
 = 1.2 =
-* Added support for custom post type author capability testing.
-* Added support for Internationalization.
 * Added ability to run custom user search via filter.
+* Added support for Internationalization.
+* Added Spanish translation with help from Andrew Kurtis from WebHostingHub Support.
+* Added support for custom post type author capability testing.
 * Renamed the CSS and Javascript file.
 
 = 1.1 =
@@ -121,9 +124,10 @@ function authors_autocomplete_custom_user_search( $user_ids, $search_term, $post
 == Upgrade Notice ==
 
 = 1.2 =
-* Added support for custom post type author capability testing.
-* Added support for Internationalization.
 * Added ability to run custom user search via filter.
+* Added support for Internationalization.
+* Added Spanish translation with help from Andrew Kurtis from WebHostingHub Support.
+* Added support for custom post type author capability testing.
 * Renamed the CSS and Javascript file.
 
 = 1.1 =
